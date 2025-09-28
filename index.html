@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Pig Runner — Con lợn chạy ngang màn hình</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(180deg, #f7f7f9, #e6f0ff);
+            font-family: Inter, Segoe UI, Roboto, Arial;
+            gap: 24px;
+        }
+
+        .stage {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 200px;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(20, 30, 60, 0.08);
+            padding: 16px;
+        }
+
+        .runner {
+            position: absolute;
+            right: -60%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+            animation: flyLeft var(--duration, 10s) linear infinite;
+        }
+
+        .pig {
+            font-size: 80px;
+            line-height: 1;
+            display: inline-block;
+            transform-origin: center;
+            animation: pigBounce 0.6s ease-in-out infinite;
+            filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.12));
+        }
+
+        .trail {
+            font-weight: 700;
+            font-size: 20px;
+            background: linear-gradient(90deg, #ff7a7a, #ffb199);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        @keyframes pigBounce {
+            0% {
+                transform: translateY(0) rotate(4deg);
+            }
+
+            50% {
+                transform: translateY(-8px) rotate(-6deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(4deg);
+            }
+        }
+
+        @keyframes flyLeft {
+            0% {
+                right: -60%;
+            }
+
+            100% {
+                right: 110%;
+            }
+        }
+
+        @media(max-width:420px) {
+            .stage {
+                height: 150px
+            }
+
+            .pig {
+                font-size: 60px
+            }
+
+            .trail {
+                font-size: 16px
+            }
+        }
+
+        /* Button style */
+        .btn {
+            padding: 12px 28px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #ff7a7a, #ff4da6);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hiệu ứng hù */
+        .scare {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgb(0, 0, 0);
+            color: #fff;
+            font-size: 64px;
+            font-weight: 900;
+            z-index: 9999;
+            animation: fadeOut 1.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1
+            }
+
+            70% {
+                opacity: 1
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="stage" role="region" aria-label="Con lợn chạy ngang màn hình">
+        <div class="runner" id="runner">
+            <span class="pig" id="pig">🐖</span>
+            <span class="trail">Thiệc là ngủ ngon, để mai còn có sức hù anh tiếp chớ (●'◡'●)</span>
+        </div>
+    </div>
+
+    <!-- 2 nút riêng -->
+    <button class="btn" id="playMusic">Play Music 🎵</button>
+    <button class="btn" id="clickMe">Click Me</button>
+
+    <!-- Nhúng nhạc -->
+    <audio id="bgMusic" src="./test.mp3" loop></audio>
+
+    <script>
+        const pigEl = document.getElementById('pig');
+        const bgMusic = document.getElementById('bgMusic');
+        const playMusicBtn = document.getElementById('playMusic');
+        const clickMeBtn = document.getElementById('clickMe');
+
+        // click stage -> đổi icon lợn
+        document.querySelector('.stage').addEventListener('click', () => {
+            const pigs = ['🐖', '🐷', '🐽'];
+            pigEl.textContent = pigs[Math.floor(Math.random() * pigs.length)];
+        });
+
+        // click button -> hiện hù
+        clickMeBtn.addEventListener('click', () => {
+            showScare();
+        });
+
+        function showScare() {
+            const overlay = document.createElement('div');
+            overlay.className = 'scare';
+            overlay.textContent = '👻 Hù!';
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.remove(), 1500);
+        }
+
+        // Play music khi click
+        playMusicBtn.addEventListener('click', () => {
+            bgMusic.play();
+        });
+    </script>
+</body>
+
+</html>
